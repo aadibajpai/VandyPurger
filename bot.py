@@ -17,7 +17,7 @@ def time_to_sleep():
     now = datetime.utcnow()
     # 10am UTC is 5am Vandy time
     # edited rn for test
-    remaining = (timedelta(hours=24) - (now - now.replace(hour=21, minute=45, second=0, microsecond=0))).total_seconds() % (24 * 3600)
+    remaining = (timedelta(hours=24) - (now - now.replace(hour=22, minute=10, second=0, microsecond=0))).total_seconds() % (24 * 3600)
     return remaining
 
 
@@ -34,7 +34,7 @@ async def on_ready():
 async def on_message(message):
     global activity
     try:
-        msg = await bot.wait_for('message', timeout=1790.0)
+        msg = await bot.wait_for('message', timeout=10.0)
     except asyncio.TimeoutError:
         print("No message")
         activity = False
