@@ -26,6 +26,7 @@ async def on_ready():
     print(f'{bot.user.name} is running now')
     remaining = time_to_sleep()
     print(f"Going to sleep for {remaining} seconds.")
+    await asyncio.sleep(remaining)
 
 @bot.event
 async def on_message(message):
