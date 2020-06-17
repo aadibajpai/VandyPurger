@@ -71,11 +71,7 @@ daily_purge.start()
 
 @bot.command()
 async def ping(ctx):
-    embed = discord.Embed(
-        title="Ping",
-        colour=0x2859b8,
-        description=f'Pong! `Latency: {round(bot.latency * 1000)} ms`')
-    await ctx.send(embed=embed)
+    await ctx.send(f"Pong; {bot.latency * 1000:.03f}ms")
 
 
 bot.run(os.environ["DISCORD_TOKEN"])
