@@ -1,5 +1,7 @@
-mport discord
+import discord
 import asyncio
+import os
+
 from datetime import datetime, timedelta
 from discord.ext import commands, tasks
 
@@ -10,12 +12,20 @@ target_channel_id = 702296171829264394  # wellness-office in vandy discord
 activity = True
 
 
+def time_to_sleep():
+    now = datetime.utcnow()
+    # 10am UTC is 5am Vandy time
+    remaining = (timedelta(hours=24) - (now - now.replace(hour=10, minute=00, second=0, microsecond=0))).total_seconds() % (24 * 3600)
+    return remaining
+
+
 @bot.event
 async def on_ready():
     await bot.change_presence(status=discord.Status.online,
                                  activity=discord.Activity(name="the clock.", type=3))
     print(f'{bot.user.name} is running now')
-
+    remaining = time_to_sleep()
+    print(f"Going to sleep for {remaining} seconds.")
 
 @bot.event
 async def on_message(message):
@@ -42,8 +52,8 @@ async def daily_purge():
         await asyncio.sleep(10)
         await purge_channel.purge()
         await purge_channel.send("Yeeted.")
-        now = datetime.utcnow()
-        remaining = (timedelta(hours=24) - (now - now.replace(hour=1, minute=00, second=0, microsecond=0))).total_seconds() % (24 * 3600)
+
+        remaining = time_to_sleep()
         await purge_channel.send(f"Going to sleep for {remaining} seconds.")
         await asyncio.sleep(remaining)
 
@@ -65,4 +75,4 @@ async def ping(ctx):
     await ctx.send(embed=embed)
 
 
-bot.run("INSERT_TOKEN")
+bot.run(os.environ["DISCORD_TOKEN"])
