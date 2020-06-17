@@ -17,7 +17,7 @@ def time_to_sleep():
     now = datetime.utcnow()
     # 10am UTC is 5am Vandy time
     # edited rn for test
-    remaining = (timedelta(hours=24) - (now - now.replace(hour=22, minute=10, second=0, microsecond=0))).total_seconds() % (24 * 3600)
+    remaining = (timedelta(hours=24) - (now - now.replace(hour=22, minute=20, second=0, microsecond=0))).total_seconds() % (24 * 3600)
     return remaining
 
 
@@ -52,6 +52,7 @@ async def daily_purge():
     else:
         purge_channel = bot.get_channel(target_channel_id)
         await purge_channel.send(f"Messages about to be purged in `10` seconds in channel {purge_channel.mention}")
+        print('About to yeet.')
         await asyncio.sleep(10)
         await purge_channel.purge()
         await purge_channel.send("Yeeted.")
