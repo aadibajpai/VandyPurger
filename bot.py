@@ -17,7 +17,7 @@ def time_to_sleep():
     now = datetime.utcnow()
     # 10am UTC is 5am Vandy time
     # edited rn for test
-    remaining = (timedelta(hours=24) - (now - now.replace(hour=21, minute=30, second=0, microsecond=0))).total_seconds() % (24 * 3600)
+    remaining = (timedelta(hours=24) - (now - now.replace(hour=21, minute=45, second=0, microsecond=0))).total_seconds() % (24 * 3600)
     return remaining
 
 
@@ -44,7 +44,7 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-@tasks.loop(minutes=30)
+@tasks.loop(minutes=1)
 async def daily_purge():
     global activity
     if activity:
@@ -71,7 +71,7 @@ daily_purge.start()
 
 @bot.command()
 async def ping(ctx):
-    await ctx.send(f"Pong; {bot.latency * 1000:.03f}ms")
+    await ctx.send(f"Pong! {bot.latency * 1000:.03f}ms")
 
 
 bot.run(os.environ["DISCORD_TOKEN"])
