@@ -8,14 +8,16 @@ from discord.ext import commands, tasks
 bot = commands.Bot(command_prefix='v;')
 
 
-target_channel_id = 702296171829264394  # wellness-office in vandy discord
+# target_channel_id = 702296171829264394  # wellness-office in vandy discord
+target_channel_id = 722609125950750771  # testing
 activity = True
 
 
 def time_to_sleep():
     now = datetime.utcnow()
     # 10am UTC is 5am Vandy time
-    remaining = (timedelta(hours=24) - (now - now.replace(hour=10, minute=00, second=0, microsecond=0))).total_seconds() % (24 * 3600)
+    # edited rn for test
+    remaining = (timedelta(hours=24) - (now - now.replace(hour=21, minute=30, second=0, microsecond=0))).total_seconds() % (24 * 3600)
     return remaining
 
 
