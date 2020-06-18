@@ -23,8 +23,10 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     global activity
+    def check(m):
+        return m.channel.id == target_channel_id
     try:
-        msg = await bot.wait_for('message', timeout=10.0)
+        msg = await bot.wait_for('message', timeout=10.0, check=check)
     except asyncio.TimeoutError:
         print("No message")
         activity = False
@@ -44,7 +46,7 @@ async def daily_purge():
         await purge_channel.send(f"Messages about to be purged in `10` seconds in channel {purge_channel.mention}")
         print('About to be yeeted.')
         await asyncio.sleep(10)
-        deleted = await purge_channel.purge()
+        deleted = await purge_channel.purge(limit=500)
         await purge_channel.send(f"Yeeted {len(deleted)} messages.")
         now = datetime.utcnow()
         # 10am UTC is 5am Vandy time
@@ -74,7 +76,7 @@ async def ping(ctx):
 async def channel(ctx):
     global target_channel_id
     target_channel_id = ctx.channel.id
-    await ctx.send(f"Channel set to {target_channel_id.mention}")
+    await ctx.send(f"Channel set to {ctx.channel.mention}")
 
 
 bot.run(os.environ["DISCORD_TOKEN"])
