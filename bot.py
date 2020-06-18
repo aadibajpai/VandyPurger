@@ -1,7 +1,8 @@
-import discord
 import asyncio
+import discord
 import os
 from datetime import datetime, timedelta
+
 from discord.ext import commands, tasks
 
 bot = commands.Bot(command_prefix='v;')
@@ -15,8 +16,8 @@ activity = True
 @bot.event
 async def on_ready():
     await bot.change_presence(status=discord.Status.online,
-                                 activity=discord.Activity(name="the clock!!!", type=3))
-    print(f'{bot.user.name} is running....')
+                                 activity=discord.Activity(name="the clock.", type=3))
+    print(f'{bot.user.name} is running...')
 
 
 @bot.event
@@ -41,15 +42,17 @@ async def daily_purge():
     else:
         purge_channel = bot.get_channel(target_channel_id)
         await purge_channel.send(f"Messages about to be purged in `10` seconds in channel {purge_channel.mention}")
+        print('About to be yeeted.')
         await asyncio.sleep(10)
-        await purge_channel.purge()
-        await purge_channel.send("Yeeted.")
+        deleted = await purge_channel.purge()
+        await purge_channel.send(f"Yeeted {deleted} messages.")
         now = datetime.utcnow()
         remaining = (timedelta(hours=24) - (now - now.replace(hour=10,
-                                                              minute=00,
+                                                              minute=0,
                                                               second=0,
                                                               microsecond=0))).total_seconds() % (24 * 3600)
         await purge_channel.send(f"Going to sleep for {remaining} seconds.")
+        print(f"Going to sleep for {remaining} seconds.")
         await asyncio.sleep(remaining)
 
 
