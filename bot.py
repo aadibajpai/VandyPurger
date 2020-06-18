@@ -3,10 +3,11 @@ import asyncio
 from datetime import datetime, timedelta
 from discord.ext import commands, tasks
 
-bot = commands.Bot(".")
+bot = commands.Bot(command_prefix='v;')
 
 
-target_channel_id = 722609125950750771
+# target_channel_id = 702296171829264394  # wellness-office in vandy discord
+target_channel_id = 722609125950750771 #testing
 activity = True
 
 
@@ -35,19 +36,19 @@ async def on_message(message):
 async def daily_purge():
     global activity
     if activity:
-        print("Purge delayed for 10 seconds")
+        print("Purge snoozed for 30 minutes")
     else:
         purge_channel = bot.get_channel(target_channel_id)
-        print(f"Messages about to purge in `10` seconds in channel {purge_channel.mention}")
+        await purge_channel.send(f"Messages about to be purged in `10` seconds in channel {purge_channel.mention}")
         await asyncio.sleep(10)
         await purge_channel.purge()
-        print("Cleared")
+        await purge_channel.send("Yeeted.")
         now = datetime.utcnow()
         remaining = (timedelta(hours=24) - (now - now.replace(hour=10,
                                                               minute=00,
                                                               second=0,
                                                               microsecond=0))).total_seconds() % (24 * 3600)
-        print(f"Going to sleep for {remaining} seconds")
+        await purge_channel.send(f"Going to sleep for {remaining} seconds.")
         await asyncio.sleep(remaining)
 
 
@@ -60,10 +61,15 @@ daily_purge.start()
 
 
 @bot.command()
+async def ping(ctx):
+    await ctx.send(f"Pong! {bot.latency * 1000:.03f}ms")
+
+
+@bot.command()
 async def channel(ctx):
     global target_channel_id
     target_channel_id = ctx.channel.id
     await ctx.send(f"Channel set to {target_channel_id.mention}")
 
 
-bot.run("Token")
+bot.run(os.environ["DISCORD_TOKEN"])
