@@ -45,7 +45,7 @@ async def daily_purge():
         print('About to be yeeted.')
         await asyncio.sleep(10)
         deleted = await purge_channel.purge()
-        await purge_channel.send(f"Yeeted {deleted} messages.")
+        await purge_channel.send(f"Yeeted {len(deleted)} messages.")
         now = datetime.utcnow()
         # 10am UTC is 5am Vandy time
         remaining = (timedelta(hours=24) - (now - now.replace(hour=10,
