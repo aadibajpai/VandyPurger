@@ -9,7 +9,7 @@ bot = commands.Bot(command_prefix='v;')
 
 
 # target_channel_id = 702296171829264394  # wellness-office in vandy discord
-target_channel_id = 722609125950750771 #testing
+target_channel_id = 722609125950750771 # testing
 activity = True
 
 
@@ -47,6 +47,7 @@ async def daily_purge():
         deleted = await purge_channel.purge()
         await purge_channel.send(f"Yeeted {deleted} messages.")
         now = datetime.utcnow()
+        # 10am UTC is 5am Vandy time
         remaining = (timedelta(hours=24) - (now - now.replace(hour=10,
                                                               minute=0,
                                                               second=0,
