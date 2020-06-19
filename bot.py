@@ -35,13 +35,13 @@ async def daily_purge():
     last_message_time = messages[0].created_at
 
     diff = datetime.utcnow() - last_message_time
-    print(f"{diff}")
+    print(diff)
 
     if diff > timedelta(minutes=30):
         await purge_channel.send(f"Messages about to be purged in `10` seconds in channel {purge_channel.mention}")
         print('About to yeet.')
         await asyncio.sleep(10)
-        deleted = await purge_channel.purge(limit=500)
+        deleted = await purge_channel.purge(limit=None)
         await purge_channel.send(f"Yeeted {len(deleted)} messages.")
 
         remaining = time_to_sleep()
