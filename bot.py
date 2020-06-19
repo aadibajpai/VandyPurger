@@ -22,12 +22,12 @@ async def on_ready():
 def time_to_sleep():
     now = datetime.utcnow()
     # 10am UTC is 5am Vandy time
-    remaining = (timedelta(hours=24) - (now - now.replace(hour=10,
+    remaining_seconds = (timedelta(hours=24) - (now - now.replace(hour=10,
                                                           minute=0,
                                                           second=0,
                                                           microsecond=0))).total_seconds() % (24 * 3600)
+    remaining = round(remaining_seconds)
     return remaining
-
 
 @tasks.loop(minutes=30)
 async def daily_purge():
