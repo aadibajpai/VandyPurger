@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 from discord.ext import commands, tasks
 
-bot = commands.Bot(command_prefix='.')
+bot = commands.Bot(command_prefix='v;')
 
 target_channel_id = 702296171829264394  # wellness-office in vandy discord
 # target_channel_id = 722609125950750771  # testing
@@ -47,7 +47,7 @@ async def daily_purge():
         print(f"Going to sleep for {remaining} seconds.")
         await asyncio.sleep(remaining)
     else:
-        print("Purge snoozed for 20 seconds")
+        print("Purge snoozed for 30 minutes")
 
 
 @daily_purge.before_loop
@@ -67,11 +67,4 @@ async def ping(ctx):
     await ctx.send(f"Pong! {bot.latency * 1000:.03f}ms")
 
 
-@bot.command()
-async def channel(ctx):
-    global target_channel_id
-    target_channel_id = ctx.channel.id
-    await ctx.send(f"Channel set to {ctx.channel.mention}")
-
-
-bot.run("NzIyNjA2NjA2MTE4MDI3MzE0.Xulh4g.uoUpZcah2lxPFhZamnvdVr-lSfY")
+bot.run(os.environ["DISCORD_TOKEN"])
