@@ -5,62 +5,59 @@ from datetime import datetime, timedelta
 
 from discord.ext import commands, tasks
 
-bot = commands.Bot(command_prefix='v;')
+bot = commands.Bot(command_prefix='.')
 
-
-# target_channel_id = 702296171829264394  # wellness-office in vandy discord
-target_channel_id = 722609125950750771 # testing
+target_channel_id = 702296171829264394  # wellness-office in vandy discord
+# target_channel_id = 722609125950750771  # testing
 activity = True
 
 
 @bot.event
 async def on_ready():
     await bot.change_presence(status=discord.Status.online,
-                                 activity=discord.Activity(name="the clock.", type=3))
+                              activity=discord.Activity(name="the clock.", type=3))
     print(f'{bot.user.name} is running...')
 
 
-@bot.event
-async def on_message(message):
-    global activity
-    try:
-        msg = await bot.wait_for('message', timeout=10.0)
-    except asyncio.TimeoutError:
-        print("No message")
-        activity = False
-    else:
-        print("Message")
-        activity = True
-    await bot.process_commands(message)
+def time_to_sleep():
+    now = datetime.utcnow()
+    # 10am UTC is 5am Vandy time
+    remaining = (timedelta(hours=24) - (now - now.replace(hour=10,
+                                                          minute=0,
+                                                          second=0,
+                                                          microsecond=0))).total_seconds() % (24 * 3600)
+    return remaining
 
 
 @tasks.loop(minutes=30)
 async def daily_purge():
-    global activity
-    if activity:
-        print("Purge snoozed for 30 minutes")
-    else:
-        purge_channel = bot.get_channel(target_channel_id)
+    purge_channel = bot.get_channel(target_channel_id)
+    messages = await purge_channel.history(limit=1).flatten()
+    last_message_time = messages[0].created_at
+    print(f"{datetime.utcnow() - last_message_time}")
+
+    if datetime.utcnow() - last_message_time >= timedelta(minutes=30):
         await purge_channel.send(f"Messages about to be purged in `10` seconds in channel {purge_channel.mention}")
         print('About to be yeeted.')
         await asyncio.sleep(10)
-        deleted = await purge_channel.purge()
+        deleted = await purge_channel.purge(limit=500)
         await purge_channel.send(f"Yeeted {len(deleted)} messages.")
-        now = datetime.utcnow()
-        # 10am UTC is 5am Vandy time
-        remaining = (timedelta(hours=24) - (now - now.replace(hour=10,
-                                                              minute=0,
-                                                              second=0,
-                                                              microsecond=0))).total_seconds() % (24 * 3600)
+        remaining = time_to_sleep()
         await purge_channel.send(f"Going to sleep for {remaining} seconds.")
         print(f"Going to sleep for {remaining} seconds.")
         await asyncio.sleep(remaining)
+    else:
+        print("Purge snoozed for 20 seconds")
 
 
 @daily_purge.before_loop
 async def before():
     await bot.wait_until_ready()
     print("Finished waiting")
+    remaining = time_to_sleep()
+    print(f"Going to sleep for {remaining} seconds.")
+    await asyncio.sleep(remaining)
+
 
 daily_purge.start()
 
@@ -74,7 +71,7 @@ async def ping(ctx):
 async def channel(ctx):
     global target_channel_id
     target_channel_id = ctx.channel.id
-    await ctx.send(f"Channel set to {target_channel_id.mention}")
+    await ctx.send(f"Channel set to {ctx.channel.mention}")
 
 
-bot.run(os.environ["DISCORD_TOKEN"])
+bot.run("NzIyNjA2NjA2MTE4MDI3MzE0.Xulh4g.uoUpZcah2lxPFhZamnvdVr-lSfY")
