@@ -38,7 +38,7 @@ async def on_message(message):
             with open('ope.csv', 'w', newline='') as csvfile:
                 writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
                 writer.writerows(rows)
-            await message.channel.send(f'{message.author.nick} has said Ope {author_count} times. Yikes.')
+            await message.channel.send(f'{message.author.nick if message.author.nick else message.author.name} has said Ope {author_count} times. Yikes.')
     await bot.process_commands(message)
 
 
