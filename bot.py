@@ -1,6 +1,8 @@
 import asyncio
+import csv
 import discord
 import os
+import re
 from datetime import datetime, timedelta
 
 from discord.ext import commands, tasks
@@ -11,6 +13,29 @@ bot = commands.Bot(command_prefix='v;')
 target_channel_id = 702296171829264394  # wellness-office in vandy discord
 # target_channel_id = 722609125950750771 # testing
 activity = True
+
+@bot.event
+async def on_message(message):
+    if not message.author.bot:
+        match = re.search('\bope\b'), message.content.lower)
+        if match:
+            with open('ope.csv', 'w', newline='') as csvfile:
+                reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+                rows = []
+                author_found = False
+                author_count = 0
+                for row in reader:
+                    if message.author == row[0]:
+                        row[1] += 1
+                        author_found = True
+                        author_count = row[1]
+                    rows.append[row]
+                if not author_found:
+                    rows.append[f'{message.author}', '1']
+                    author_count = 1
+                writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                writer.writerows(rows)
+            await message.channel.send(f'{message.author} has said Ope {author_count} times. Yikes.')
 
 
 @bot.event
