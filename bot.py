@@ -17,25 +17,29 @@ activity = True
 @bot.event
 async def on_message(message):
     if not message.author.bot:
-        match = re.search('\bope\b'), message.content.lower())
+        match = re.search(r'\bope\b', message.content.lower())
         if match:
-            with open('ope.csv', 'w', newline='') as csvfile:
+            with open('ope.csv', newline='') as csvfile:
                 reader = csv.reader(csvfile, delimiter=',', quotechar='|')
                 rows = []
                 author_found = False
                 author_count = 0
                 for row in reader:
-                    if message.author == row[0]:
-                        row[1] += 1
+                    if message.author.id == int(row[0]):
+                        counter = int(row[1])
+                        counter += 1
+                        row[1] = str(counter)
                         author_found = True
                         author_count = row[1]
-                    rows.append[row]
+                    rows.append(row)
                 if not author_found:
-                    rows.append[f'{message.author}', '1']
+                    rows.append([f'{message.author.id}', '1'])
                     author_count = 1
+            with open('ope.csv', 'w', newline='') as csvfile:
                 writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
                 writer.writerows(rows)
             await message.channel.send(f'{message.author} has said Ope {author_count} times. Yikes.')
+    await bot.process_commands(message)
 
 
 @bot.event
