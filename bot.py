@@ -17,7 +17,7 @@ activity = True
 @bot.event
 async def on_message(message):
     if not message.author.bot:
-        match = re.search('\bope\b'), message.content.lower())
+        match = re.search('\bope\b'), message.content.lower)
         if match:
             with open('ope.csv', 'w', newline='') as csvfile:
                 reader = csv.reader(csvfile, delimiter=',', quotechar='|')
