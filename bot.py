@@ -1,7 +1,7 @@
 import asyncio
+import csv
 import discord
 import os
-import csv
 import re
 from datetime import datetime, timedelta
 
@@ -18,7 +18,7 @@ activity = True
 async def on_message(message):
     if message.author == client.user:
         return
-    match = re.search((?:\b|\s+)(?:ope)(?:\s+|\b), message.content.lower)
+    match = re.search(\bope\b), message.content.lower)
     if match:
         with open('ope.csv', 'w', newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter=',', quotechar='|')
@@ -26,12 +26,12 @@ async def on_message(message):
             author_found = False
             author_count = 0
             for row in reader:
-                if (message.author == row[0]):
+                if message.author == row[0]:
                     row[1] += 1
                     author_found = True
                     author_count = row[1]
                 rows.append[row]
-            if (author_found == False):
+            if not author_found:
                 rows.append[f'{message.author}', '1']
                 author_count = 1
             writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
