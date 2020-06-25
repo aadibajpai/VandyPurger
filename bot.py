@@ -10,7 +10,7 @@ from discord.ext import commands, tasks
 
 bot = commands.Bot(command_prefix='v;')
 
-conn = asyncpg.connect(user=os.environ["DATABASE_URL"])
+conn = asyncpg.connect(user=os.environ["DATABASE_URL"], ssl=True)
 
 
 target_channel_id = 702296171829264394  # wellness-office in vandy discord
