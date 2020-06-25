@@ -1,4 +1,5 @@
 import asyncio
+import asyncpg
 import csv
 import discord
 import os
@@ -9,17 +10,25 @@ from discord.ext import commands, tasks
 
 bot = commands.Bot(command_prefix='v;')
 
+conn = asyncpg.connect(user=os.environ["DATABASE_URL"])
+
 
 target_channel_id = 702296171829264394  # wellness-office in vandy discord
 # target_channel_id = 722609125950750771 # testing
 activity = True
-
 @bot.event
 async def on_message(message):
     if not message.author.bot:
         print(message.author)
         match = re.search(r'\bope\b', message.content.lower())
         if match:
+
+            db_row = (await conn).fetchrow('SELECT * FROM discord_id WHERE name = $1', message.author.id)
+            print(db_row)
+            # await conn.execute('''
+            # INSERT INTO users(name, dob) VALUES($1, $2)
+            # ''', message.author.id, 1)
+            print(db_row)
             with open('ope.csv', newline='') as csvfile:
                 reader = csv.reader(csvfile, delimiter=',', quotechar='|')
                 rows = []
@@ -45,6 +54,14 @@ async def on_message(message):
 
 @bot.event
 async def on_ready():
+    print(conn)
+    (await conn).execute('''
+            CREATE TABLE opes(
+                id serial PRIMARY KEY,
+                discord_id text,
+                ope_count int
+            )
+        ''')
     await bot.change_presence(status=discord.Status.online,
                                  activity=discord.Activity(name="the clock.", type=3))
     print(f'{bot.user.name} is running...')
