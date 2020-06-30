@@ -1,7 +1,8 @@
 import asyncio
-import asyncpg
 import csv
 import discord
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 import os
 import re
 from datetime import datetime, timedelta
@@ -10,7 +11,11 @@ from discord.ext import commands, tasks
 
 bot = commands.Bot(command_prefix='v;')
 
-conn = asyncpg.connect(user=os.environ["DATABASE_URL"], ssl=True)
+scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+creds = ServiceAccountCredentials.from_json_keyfile_name('creds.json', scope)
+client = gspread.authorize(creds)
+sheet = client.open("Data").sheet1
+
 
 
 target_channel_id = 702296171829264394  # wellness-office in vandy discord
@@ -22,46 +27,28 @@ async def on_message(message):
         print(message.author)
         match = re.search(r'\bope\b', message.content.lower())
         if match:
-
-            db_row = (await conn).fetchrow('SELECT * FROM discord_id WHERE name = $1', message.author.id)
-            print(db_row)
-            # await conn.execute('''
-            # INSERT INTO users(name, dob) VALUES($1, $2)
-            # ''', message.author.id, 1)
-            print(db_row)
-            with open('ope.csv', newline='') as csvfile:
-                reader = csv.reader(csvfile, delimiter=',', quotechar='|')
-                rows = []
-                author_found = False
-                author_count = 0
-                for row in reader:
-                    if message.author.id == int(row[0]):
-                        counter = int(row[1])
-                        counter += 1
-                        row[1] = str(counter)
-                        author_found = True
-                        author_count = row[1]
-                    rows.append(row)
-                if not author_found:
-                    rows.append([f'{message.author.id}', '1'])
-                    author_count = 1
-            with open('ope.csv', 'w', newline='') as csvfile:
-                writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-                writer.writerows(rows)
+            sheet = client.open("Data").sheet1
+            data = sheet.get_all_records()
+            author_found = False
+            author_count = 0
+            index = 0
+            new_index = 2
+            for record in data:
+                if message.author.id == record['id']:
+                    author_found = True
+                    sheet.update_cell(record['index'] + 1, 2, record['number'] + 1)
+                    author_count = record['number'] + 1
+                new_index += 1
+            if not author_found:
+                newRow = [str(message.author.id), 1, new_index-1]
+                sheet.insert_row(newRow, new_index)
+                author_count=1
             await message.channel.send(f'{message.author} has said Ope {author_count} times. Yikes.')
     await bot.process_commands(message)
 
 
 @bot.event
 async def on_ready():
-    print(conn)
-    (await conn).execute('''
-            CREATE TABLE opes(
-                id serial PRIMARY KEY,
-                discord_id text,
-                ope_count int
-            )
-        ''')
     await bot.change_presence(status=discord.Status.online,
                                  activity=discord.Activity(name="the clock.", type=3))
     print(f'{bot.user.name} is running...')
