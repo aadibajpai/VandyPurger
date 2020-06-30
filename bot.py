@@ -2,6 +2,7 @@ import asyncio
 import csv
 import discord
 import gspread
+import json
 from oauth2client.service_account import ServiceAccountCredentials
 import os
 import re
@@ -12,7 +13,7 @@ from discord.ext import commands, tasks
 bot = commands.Bot(command_prefix='v;')
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name('creds.json', scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(json.loads(os.environ["GOOGLE_API_CREDS"]), scope)
 client = gspread.authorize(creds)
 sheet = client.open("Data").sheet1
 
