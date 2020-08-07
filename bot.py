@@ -27,29 +27,39 @@ target_channel_id = 702296171829264394  # wellness-office in vandy discord
 activity = True
 
 
+def ope_count(message):
+    # updates ope count in sheet
+    sheet = client.open("Data").sheet1
+    data = sheet.get_all_records()
+    author_found = False
+    author_count = 0
+    new_index = 2
+    for record in data:
+        if message.author.id == record['id']:
+            author_found = True
+            sheet.update_cell(record['index'] + 1, 2, record['number'] + 1)
+            author_count = record['number'] + 1
+        new_index += 1
+    if not author_found:
+        new_row = [str(message.author.id), 1, new_index - 1]
+        sheet.insert_row(new_row, new_index)
+        author_count = 1
+
+    return author_count
+
+
 @bot.event
 async def on_message(message):
     if not message.author.bot:
         match = re.search(r'\bope\b', message.content.lower())
         if match:
             print(message.author)
-            sheet = client.open("Data").sheet1
-            data = sheet.get_all_records()
-            author_found = False
-            author_count = 0
-            new_index = 2
-            for record in data:
-                if message.author.id == record['id']:
-                    author_found = True
-                    sheet.update_cell(record['index'] + 1, 2, record['number'] + 1)
-                    author_count = record['number'] + 1
-                new_index += 1
-            if not author_found:
-                new_row = [str(message.author.id), 1, new_index-1]
-                sheet.insert_row(new_row, new_index)
-                author_count = 1
-            await message.channel.send(f'{message.author.nick or message.author.name} has said '
-                                       f'Ope {author_count} times. Yikes.')
+            count = ope_count(message)
+            await message.channel.send(f'{message.author.display_name} has said '
+                                       f'Ope {count} times. Yikes.')
+        # handle chloe 0pe
+        elif message.author.id == 495663643485143061 and re.search(r'\b0pe\b', message.content.lower()):
+            await message.channel.send('lmao chloe. yIKeS.')
     await bot.process_commands(message)
 
 
