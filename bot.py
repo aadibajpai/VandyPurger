@@ -60,6 +60,9 @@ async def on_message(message):
         # handle chloe 0pe
         elif message.author.id == 495663643485143061 and re.search(r'\b0pe\b', message.content.lower()):
             await message.channel.send('lmao chloe. yIKeS.')
+        # diya rocks 
+        if message.author.id == 607733264022765568:
+            await message.add_reaction('<:diyarocks:747953745278533725>')
     await bot.process_commands(message)
 
 
