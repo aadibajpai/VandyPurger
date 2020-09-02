@@ -51,7 +51,7 @@ def ope_count(message):
 @bot.event
 async def on_message(message):
     if not message.author.bot:
-        match = re.search(r'\bope\b', message.content.lower())
+        match = re.search(r'\bope\b', message.content.lower().replace('​', ''))  # suck it nisala, remove zws :))
         if match:
             print(message.author)
             count = ope_count(message)
