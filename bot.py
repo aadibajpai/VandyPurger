@@ -88,6 +88,7 @@ def time_to_sleep():
 
 @tasks.loop(minutes=30)
 async def daily_purge():
+    global purged
     for i in range(len(purged)):
         if purged[i] == 1:
             continue
@@ -113,7 +114,6 @@ async def daily_purge():
             print("Purge snoozed for 30 minutes")
 
     if sum(purged) == len(purged):  # all purged
-        global purged
         purged = [0 for _ in range(len(purged))]  # reset
         remaining = time_to_sleep()
         print(f"Going to sleep for {remaining} seconds.")
