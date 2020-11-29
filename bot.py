@@ -27,7 +27,7 @@ client = gspread.authorize(creds)
 sheet = client.open("Data").sheet1
 
 target_channel_id = [702296171829264394, 781003806740971580]  # wellness-office in vandy discords
-purged = [0, 0]
+purged = [0 for _ in target_channel_id]
 # target_channel_id = 722609125950750771 # testing
 activity = True
 
@@ -56,7 +56,7 @@ def ope_count(message):
 @bot.event
 async def on_message(message):
     if not message.author.bot:
-        match = re.search(r"\bope\b", message.content.lower().replace("​", ""))  # suck it nisala, remove zws :))
+        match = re.search(r"\bope\b", message.content.lower())
         if match:
             print(message.author)
             count = ope_count(message)
