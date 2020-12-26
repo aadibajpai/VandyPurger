@@ -11,6 +11,8 @@ import json
 from discord.ext import commands, tasks
 from oauth2client.service_account import ServiceAccountCredentials
 
+from utils import take_vote
+
 bot = commands.Bot(command_prefix="v;")
 
 scope = [
@@ -141,6 +143,21 @@ async def ping(ctx):
 @bot.command()
 async def github(ctx):
     await ctx.send("Catch! https://github.com/aadibajpai/VandyPurger")
+
+
+@bot.command(name="yeet")
+async def yeet(ctx, amount=30):
+    if ctx.message.channel.id not in target_channel_id:
+        await ctx.send("Sorry, this works only in wellness office")
+        return None
+
+    print(f"yeet vote by {ctx.message.author}")
+    vote = await take_vote(ctx, f"Purge {amount} messages?", 300, 3)  # 5 minutes, min 3 votes
+
+    if vote:
+        deleted = await ctx.channel.purge(limit=amount, before=ctx.message)
+        await ctx.message.delete()
+        await ctx.send(f"Yeeted {len(deleted)} messages.")
 
 
 bot.run(os.environ["DISCORD_TOKEN"])
