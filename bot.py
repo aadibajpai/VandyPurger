@@ -147,8 +147,11 @@ async def github(ctx):
 
 @bot.command(name="yeet")
 async def yeet(ctx, amount=30):
+    """
+    purge wellness by <amount> messages, default 30
+    """
     if ctx.message.channel.id not in target_channel_id:
-        await ctx.send("Sorry, this works only in wellness office")
+        await ctx.send("Sorry, this works only in wellness")
         return None
 
     print(f"yeet vote by {ctx.message.author}")
@@ -157,7 +160,8 @@ async def yeet(ctx, amount=30):
     if vote:
         deleted = await ctx.channel.purge(limit=amount, before=ctx.message)
         await ctx.message.delete()
-        await ctx.send(f"Yeeted {len(deleted)} messages.")
+        await ctx.send(f"Yeeted {len(deleted)} messages <:hug:701681347973873725>")
+        print(f"vote passed, yeeted {amount} messages")
 
 
 bot.run(os.environ["DISCORD_TOKEN"])
