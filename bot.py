@@ -59,8 +59,7 @@ def ope_count(message):
 @bot.event
 async def on_message(message):
     if not message.author.bot:
-        match = re.search(r"\bope\b", message.content.lower())
-        if match:
+        if re.search(r"\bope\b", message.content.lower()):
             print(message.author)
             count = ope_count(message)
             await message.channel.send(f"{message.author.display_name} has said " f"Ope {count} times. Yikes.")
@@ -70,8 +69,12 @@ async def on_message(message):
         # hbd syd
         if message.author.id == 608144332016451626 and random.randint(0, 8) == 3:
             await message.add_reaction("<:hug:701681347973873725>")
+        # 2201 meme
+        if re.search(r"\broth|2201\b", message.content.lower()):
+            think_str = (" " * random.randint(0, 5)).join(["T","H","I","N","K","!"])
+            await message.channel.send(f"Daddy Roth says: don't forget to {think_str}")
+            
     await bot.process_commands(message)
-
 
 @bot.event
 async def on_ready():
