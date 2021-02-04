@@ -70,7 +70,7 @@ async def on_message(message):
         if message.author.id == 608144332016451626 and random.randint(0, 8) == 3:
             await message.add_reaction("<:hug:701681347973873725>")
         # 2201 meme
-        if re.search(r"\broth\b", message.content.lower()) or re.search(r"\b2201\b", message.content.lower()):
+        if re.search(r"\broth|2201\b", message.content.lower()):
             think_str = (" " * random.randint(0, 5)).join(["T","H","I","N","K","!"])
             await message.channel.send(f"Daddy Roth says: don't forget to {think_str}")
             
