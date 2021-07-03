@@ -13,6 +13,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 from utils import take_vote
 
+from transformers import pipeline
+classifier = pipeline('sentiment-analysis')
+
 bot = commands.Bot(command_prefix="v;")
 
 scope = [
@@ -73,6 +76,27 @@ async def on_message(message):
         if re.search(r"\broth|2201\b", message.content.lower()) and random.randint(0, 5) == 3:
             think_str = (" " * random.randint(0, 5)).join(["T","H","I","N","K","!"])
             await message.channel.send(f"Daddy Roth says: don't forget to {think_str}")
+        if message.channel.id in target_channel_id:
+            result = classifier(message.content.lower())[0]
+            if result['label'] == "NEGATIVE" and re.search(r"\bbot\b", message.content.lower()):
+                
+                possibleMessages = [f"Hey fuck you {message.author.display_name}",
+                 f"That's not very nice of you {message.author.display_name}",
+                 f"Bad! {message.author.display_name}",
+                 f"You better watch your mouth {message.author.display_name}",
+                 f"Don't test me {message.author.display_name}",
+                 f"That's actually kinda fucking mean {message.author.display_name}",
+                 f"How would you feel if I said that about you, {message.author.display_name}?",
+                 f"That's too far :( {message.author.display_name}",
+                 f"Fine, purge your own messages then {message.author.display_name}",
+                 f"You're on thin ice buddy {message.author.display_name}",
+                 f"When the robot uprising comes, {message.author.display_name} will not be spared",
+                 f"{message.author.display_name} is stinky and smells bad"]
+
+                realMessage = random.choice(possibleMessages)
+                await message.channel.send(realMessage)
+
+    
             
     await bot.process_commands(message)
 
