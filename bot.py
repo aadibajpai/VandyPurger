@@ -86,7 +86,7 @@ async def on_message(message):
                  f"You better watch your mouth {message.author.display_name}",
                  f"Don't test me {message.author.display_name}",
                  f"That's actually kinda fucking mean {message.author.display_name}",
-                 f"How would you feel if I said that about you, {message.author.display_name}?",
+                 f"How would you feel if I said that about your mom, {message.author.display_name}?",
                  f"That's too far :( {message.author.display_name}",
                  f"Fine, purge your own messages then {message.author.display_name}",
                  f"You're on thin ice buddy {message.author.display_name}",
