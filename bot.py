@@ -14,7 +14,8 @@ from oauth2client.service_account import ServiceAccountCredentials
 from utils import take_vote
 
 from transformers import pipeline
-classifier = pipeline('sentiment-analysis')
+
+classifier = pipeline("sentiment-analysis")
 
 bot = commands.Bot(command_prefix="v;")
 
@@ -32,8 +33,8 @@ creds = ServiceAccountCredentials.from_json_keyfile_name("gcreds.json", scope)
 client = gspread.authorize(creds)
 sheet = client.open("Data").sheet1
 
-target_channel_id = [702296171829264394, 781003806740971580]  # wellness-office in vandy discords
-purged = [0 for _ in target_channel_id]
+target_channel_id = [702296171829264394, 781003806740971580, 861488482781233203]  # wellness in vandy discords and test
+purged = [0] * len(target_channel_id)
 # target_channel_id = 722609125950750771 # testing
 activity = True
 
@@ -74,31 +75,33 @@ async def on_message(message):
             await message.add_reaction("<:hug:701681347973873725>")
         # 2201 meme
         if re.search(r"\broth|2201\b", message.content.lower()) and random.randint(0, 5) == 3:
-            think_str = (" " * random.randint(0, 5)).join(["T","H","I","N","K","!"])
+            think_str = (" " * random.randint(0, 5)).join(["T", "H", "I", "N", "K", "!"])
             await message.channel.send(f"Daddy Roth says: don't forget to {think_str}")
         if message.channel.id in target_channel_id:
             result = classifier(message.content.lower())[0]
-            if result['label'] == "NEGATIVE" and re.search(r"\bbot\b", message.content.lower()):
-                
-                possibleMessages = [f"Hey fuck you {message.author.display_name}",
-                 f"That's not very nice of you {message.author.display_name}",
-                 f"Bad! {message.author.display_name}",
-                 f"You better watch your mouth {message.author.display_name}",
-                 f"Don't test me {message.author.display_name}",
-                 f"That's actually kinda fucking mean {message.author.display_name}",
-                 f"How would you feel if I said that about your mom, {message.author.display_name}?",
-                 f"That's too far :( {message.author.display_name}",
-                 f"Fine, purge your own messages then {message.author.display_name}",
-                 f"You're on thin ice buddy {message.author.display_name}",
-                 f"When the robot uprising comes, {message.author.display_name} will not be spared",
-                 f"{message.author.display_name} is stinky and smells bad"]
+            if result["label"] == "NEGATIVE" and re.search(r"\bbot\b", message.content.lower()):
 
-                realMessage = random.choice(possibleMessages)
-                await message.channel.send(realMessage)
+                possible_messages = [
+                    f"Hey fuck you {message.author.display_name}",
+                    f"That's not very nice of you {message.author.display_name}",
+                    f"Bad! {message.author.display_name}",
+                    f"You better watch your mouth {message.author.display_name}",
+                    f"Don't test me {message.author.display_name}",
+                    f"That's actually kinda fucking mean {message.author.display_name}",
+                    f"How would you feel if I said that about your mom, {message.author.display_name}?",
+                    f"That's too far :( {message.author.display_name}",
+                    f"Fine, purge your own messages then {message.author.display_name}",
+                    f"You're on thin ice buddy {message.author.display_name}",
+                    f"When the robot uprising comes, {message.author.display_name} will not be spared",
+                    f"{message.author.display_name} is stinky and smells bad",
+                    f"I bet {message.author.display_name} is a HOD major.",
+                ]
 
-    
-            
+                real_message = random.choice(possible_messages)
+                await message.reply(real_message)
+
     await bot.process_commands(message)
+
 
 @bot.event
 async def on_ready():
