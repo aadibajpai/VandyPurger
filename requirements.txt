@@ -1,5 +1,5 @@
 discord-py
 gspread
 oauth2client
-tensorflow
+tensorflow-cpu
 transformers
