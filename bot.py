@@ -10,10 +10,9 @@ import gspread
 import json
 from discord.ext import commands, tasks
 from oauth2client.service_account import ServiceAccountCredentials
+from transformers import pipeline
 
 from utils import take_vote
-
-from transformers import pipeline
 
 classifier = pipeline("sentiment-analysis")
 
@@ -33,10 +32,33 @@ creds = ServiceAccountCredentials.from_json_keyfile_name("gcreds.json", scope)
 client = gspread.authorize(creds)
 sheet = client.open("Data").sheet1
 
-target_channel_id = [702296171829264394, 781003806740971580, 861488482781233203]  # wellness in vandy discords and test
+target_channel_id = [
+    702296171829264394,
+    781003806740971580,
+    861488482781233203,
+]  # wellness in vandy discords and test
 purged = [0] * len(target_channel_id)
 # target_channel_id = 722609125950750771 # testing
 activity = True
+
+
+def get_insult(name):
+    insults = [
+        f"Hey fuck you {name}",
+        f"That's not very nice of you {name}",
+        f"Bad {name}!",
+        f"You better watch your mouth {name}",
+        f"Don't test me {name}",
+        f"That's actually kinda fucking mean {name}",
+        f"How would you feel if I said that about your mom, {name}?",
+        f"That's too far {name} :(",
+        f"Fine, purge your own messages then {name}",
+        f"You're on thin ice buddy",
+        f"When the robot uprising comes, {name} will not be spared",
+        f"{name} is stinky and smells bad",
+        f"I bet {name} is a HOD major.",
+    ]
+    return random.choice(insults)
 
 
 def ope_count(message):
@@ -77,27 +99,10 @@ async def on_message(message):
         if re.search(r"\broth|2201\b", message.content.lower()) and random.randint(0, 5) == 3:
             think_str = (" " * random.randint(0, 5)).join(["T", "H", "I", "N", "K", "!"])
             await message.channel.send(f"Daddy Roth says: don't forget to {think_str}")
-        if message.channel.id in target_channel_id:
+        if message.channel.id in target_channel_id and re.search(r"\bbot\b", message.content.lower()):
             result = classifier(message.content.lower())[0]
-            if result["label"] == "NEGATIVE" and re.search(r"\bbot\b", message.content.lower()):
-
-                possible_messages = [
-                    f"Hey fuck you {message.author.display_name}",
-                    f"That's not very nice of you {message.author.display_name}",
-                    f"Bad {message.author.display_name}!",
-                    f"You better watch your mouth {message.author.display_name}",
-                    f"Don't test me {message.author.display_name}",
-                    f"That's actually kinda fucking mean {message.author.display_name}",
-                    f"How would you feel if I said that about your mom, {message.author.display_name}?",
-                    f"That's too far {message.author.display_name} :(",
-                    f"Fine, purge your own messages then {message.author.display_name}",
-                    f"You're on thin ice buddy",
-                    f"When the robot uprising comes, {message.author.display_name} will not be spared",
-                    f"{message.author.display_name} is stinky and smells bad",
-                    f"I bet {message.author.display_name} is a HOD major.",
-                ]
-
-                real_message = random.choice(possible_messages)
+            if result["label"] == "NEGATIVE":
+                real_message = get_insult(message.author.display_name)
                 await message.reply(real_message)
 
     await bot.process_commands(message)
@@ -105,7 +110,10 @@ async def on_message(message):
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(status=discord.Status.online, activity=discord.Activity(name="the clock.", type=3))
+    await bot.change_presence(
+        status=discord.Status.online,
+        activity=discord.Activity(name="the clock.", type=3),
+    )
     print(f"{bot.user.name} is running...")
 
 
