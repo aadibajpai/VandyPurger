@@ -36,6 +36,7 @@ target_channel_id = [
     702296171829264394,
     781003806740971580,
     861488482781233203,
+    868546595279470632,
 ]  # wellness in vandy discords and test
 purged = [0] * len(target_channel_id)
 # target_channel_id = 722609125950750771 # testing
@@ -189,7 +190,7 @@ async def yeet(ctx, amount=30):
     purge wellness by <amount> messages, default 30
     """
     if ctx.message.channel.id not in target_channel_id:
-        await ctx.send("Sorry, this works only in wellness")
+        await ctx.send("Sorry, this works only in specified channels.")
         return None
 
     print(f"yeet vote by {ctx.message.author}")
