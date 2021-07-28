@@ -125,10 +125,10 @@ async def on_message(message):
         if message.channel.id in target_channel_id and re.search(r"\bbot\b", message.content.lower()):
             result = classifier(message.content.lower())[0]
             #add in confidence count for positive and negative comments 
-            if result["label"] == "NEGATIVE" and result["score"] >= 0.75:
+            if result["label"] == "NEGATIVE" and result["score"] >= 0.95 and random.randint(0, 5) == 3:
                 real_message = get_insult(message.author.display_name)
                 await message.reply(real_message)
-            elif result["label"] == "POSITIVE" and result["score"] >= 0.75:
+            elif result["label"] == "POSITIVE" and result["score"] >= 0.95 and random.randint(0, 5) == 3:
                 real_message = get_praise(message.author.display_name)
                 await message.reply(real_message)
 
