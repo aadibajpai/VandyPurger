@@ -64,7 +64,7 @@ def get_insult(name):
 
 #added list of praises
 def get_praise(name):
-    insults = [
+    praises = [
         f"I love you {name}",
         f"That's really sweet of you {name}!",
         f"I see good things in your future {name}!",
@@ -80,7 +80,7 @@ def get_praise(name):
         f"You know just how to make my day!",
         f"Your parents must be proud",
     ]
-    return random.choice(insults)
+    return random.choice(praises)
 
 
 
@@ -125,10 +125,10 @@ async def on_message(message):
         if message.channel.id in target_channel_id and re.search(r"\bbot\b", message.content.lower()):
             result = classifier(message.content.lower())[0]
             #add in confidence count for positive and negative comments 
-            if result["label"] == "NEGATIVE" and result["score'] >= 0.75:
+            if result["label"] == "NEGATIVE" and result["score"] >= 0.75:
                 real_message = get_insult(message.author.display_name)
                 await message.reply(real_message)
-            elif result["label"] == "POSITIVE" and result["score'] >= 0.75:
+            elif result["label"] == "POSITIVE" and result["score"] >= 0.75:
                 real_message = get_praise(message.author.display_name)
                 await message.reply(real_message)
 
