@@ -124,7 +124,7 @@ async def on_message(message):
             await message.channel.send(f"Daddy Roth says: don't forget to {think_str}")
         if message.channel.id in target_channel_id and re.search(r"\bbot\b", message.content.lower()):
             result = classifier(message.content.lower())[0]
-            #add in confidence count so negative comment 
+            #add in confidence count for positive and negative comments 
             if result["label"] == "NEGATIVE" and result["score'] >= 0.75:
                 real_message = get_insult(message.author.display_name)
                 await message.reply(real_message)
