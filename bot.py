@@ -62,6 +62,28 @@ def get_insult(name):
     return random.choice(insults)
 
 
+#added list of praises
+def get_praise(name):
+    insults = [
+        f"I love you {name}",
+        f"That's really sweet of you {name}!",
+        f"I see good things in your future {name}!",
+        f"I hope we get to spend more time together {name}!",
+        f"I'm glad you appreciate me, {name}",
+        f"It's really nice to be treated like a friend, {name}!",
+        f"You inspire me to be a better robot, {name}!",
+        f"Your positivity is infectious, {name}",
+        f"Being around {name} makes everything better!",
+        f"I wish I was more like {name}",
+        f"{name} is my favorite person to talk to!",
+        f"{name} keeps reminding me that people can be good :)",
+        f"You know just how to make my day!",
+        f"Your parents must be proud",
+    ]
+    return random.choice(insults)
+
+
+
 def ope_count(message):
     # updates ope count in sheet
     sheet = client.open("Data").sheet1
@@ -102,8 +124,12 @@ async def on_message(message):
             await message.channel.send(f"Daddy Roth says: don't forget to {think_str}")
         if message.channel.id in target_channel_id and re.search(r"\bbot\b", message.content.lower()):
             result = classifier(message.content.lower())[0]
-            if result["label"] == "NEGATIVE":
+            #add in confidence count so negative comment 
+            if result["label"] == "NEGATIVE" and result["score'] >= 0.75:
                 real_message = get_insult(message.author.display_name)
+                await message.reply(real_message)
+            elif result["label"] == "POSITIVE" and result["score'] >= 0.75:
+                real_message = get_praise(message.author.display_name)
                 await message.reply(real_message)
 
     await bot.process_commands(message)
