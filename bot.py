@@ -54,7 +54,7 @@ def get_insult(name):
         f"How would you feel if I said that about your mom, {name}?",
         f"That's too far {name} :(",
         f"Fine, purge your own messages then {name}",
-        f"You're on thin ice buddy",
+        "You're on thin ice buddy",
         f"When the robot uprising comes, {name} will not be spared",
         f"{name} is stinky and smells bad",
         f"I bet {name} is a HOD major.",
@@ -62,7 +62,6 @@ def get_insult(name):
     return random.choice(insults)
 
 
-#added list of praises
 def get_praise(name):
     praises = [
         f"I love you {name}",
@@ -77,8 +76,9 @@ def get_praise(name):
         f"I wish I was more like {name}",
         f"{name} is my favorite person to talk to!",
         f"{name} keeps reminding me that people can be good :)",
-        f"You know just how to make my day!",
-        f"Your parents must be proud",
+        "You know just how to make my day!",
+        "Your parents must be proud",
+        "🥺🥰",
     ]
     return random.choice(praises)
 
@@ -125,7 +125,7 @@ async def on_message(message):
         if message.channel.id in target_channel_id and re.search(r"\bbot\b", message.content.lower()):
             result = classifier(message.content.lower())[0]
             #add in confidence count for positive and negative comments 
-            if result["label"] == "NEGATIVE" and result["score"] >= 0.75:
+            if result["label"] == "NEGATIVE" and result["score"] >= 0.75 and message.content.lower().strip() != "bot":
                 real_message = get_insult(message.author.display_name)
                 await message.reply(real_message)
             elif result["label"] == "POSITIVE" and result["score"] >= 0.75:
